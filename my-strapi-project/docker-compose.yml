@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: password1234
+      POSTGRES_DB: strapi_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  strapi:
+    image: strapi/strapi
+    container_name: strapi
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: Postgres  # 🟢 THIS WORKS because docker links the containers
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi_db
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: password1234
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./app:/srv/app  # You can mount your app code here
+
+volumes:
+  pgdata:
